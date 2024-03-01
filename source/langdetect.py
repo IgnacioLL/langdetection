@@ -63,7 +63,7 @@ if __name__ == "__main__":
 
     #Apply Classifier  
     X_train, X_test = normalizeData(X_train_raw, X_test_raw)
-    y_predict = applyNaiveBayes(X_train, y_train, X_test)
+    y_predict = applyXgboost(X_train, y_train, X_test)
     
     print('========')
     print('Prediction Results:')    
