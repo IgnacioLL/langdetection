@@ -20,14 +20,14 @@ def preprocess(sentence, labels):
 
     sentence = sentence.apply(lambda x: remove_numbers(x)) ## without it no difference 0.8918 vs 0.8920
 
-    sentence = sentence.apply(lambda x: get_random_letters(x)) ## clearly degrades the performance of the algo.
+    sentence = sentence.apply(lambda x: delete_minority_alphabet(x)) ## clearly degrades the performance of the algo.
 
     return sentence,labels
 
 
 ad = AlphabetDetector()
 
-def get_random_letters(sentence):
+def delete_minority_alphabet(sentence):
     # Selecting five random letters
     max_len = np.minimum(len(sentence), 10)
     random_letters = random.sample(sentence,  max_len)
