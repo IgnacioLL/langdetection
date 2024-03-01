@@ -1,4 +1,8 @@
 import nltk
+import numpy as np
+import random
+from alphabet_detector import AlphabetDetector
+
 
 #Tokenizer function. You can add here different preprocesses.
 def preprocess(sentence, labels):
@@ -14,21 +18,19 @@ def preprocess(sentence, labels):
     # Keep in mind that sentence splitting affectes the number of sentences
     # and therefore, you should replicate labels to match.
 
+    sentence = sentence.apply(lambda x: remove_numbers(x)) ## without it no difference 0.8918 vs 0.8920
+
+    sentence = sentence.apply(lambda x: get_random_letters(x)) ## clearly degrades the performance of the algo.
 
     return sentence,labels
 
-
-
-
-
-import random
-from alphabet_detector import AlphabetDetector
 
 ad = AlphabetDetector()
 
 def get_random_letters(sentence):
     # Selecting five random letters
-    random_letters = random.sample(sentence,  5)
+    max_len = np.minimum(len(sentence), 10)
+    random_letters = random.sample(sentence,  max_len)
 
     # Counting the occurrences of each alphabet type
     alphabet_counts = {
@@ -71,7 +73,19 @@ def get_random_letters(sentence):
     majority_alphabet = [key for key, value in alphabet_counts.items() if value == max_count]
 
     # Filtering letters based on the majority alphabet type
-    filtered_letters = [letter for letter in random_letters if getattr(ad, f'is_{majority_alphabet[0]}')(letter)]
+    filtered_letters = [letter for letter in sentence if getattr(ad, f'is_{majority_alphabet[0]}')(letter)]
 
-    return filtered_letters
+    return "".join(filtered_letters)
 
+def remove_numbers(text):
+  """
+  This function removes numbers from a given text string.
+
+  Args:
+      text: The text string to process.
+
+  Returns:
+      A new string with all numeric characters removed.
+  """
+  no_digits = "".join(char for char in text if not char.isdigit())
+  return no_digits
