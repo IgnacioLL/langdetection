@@ -1,11 +1,12 @@
-import nltk
+import pandas as pd
 import numpy as np
 import random
+from typing import Literal
 from alphabet_detector import AlphabetDetector
 
+ad = AlphabetDetector()
 
-#Tokenizer function. You can add here different preprocesses.
-def preprocess(sentence, labels):
+def preprocess(sentence, labels, method: Literal['sentence-splitting', 'alphabet-discrimination']):
     '''
     Task: Given a sentence apply all the required preprocessing steps
     to compute train our classifier, such as sentence splitting, 
@@ -14,18 +15,30 @@ def preprocess(sentence, labels):
     Input: Sentence in string format
     Output: Preprocessed sentence either as a list or a string
     '''
-    # Place your code here
-    # Keep in mind that sentence splitting affectes the number of sentences
-    # and therefore, you should replicate labels to match.
+    if method == 'sentence-splitting':
+        sentence = sentence.apply(lambda x: remove_numbers(x)) ## without it no difference 0.8918 vs 0.8920
+        sentence = sentence.apply(lambda x: get_random_letters(x)) ## clearly degrades the performance of the algo.
+        return sentence,labels
+    elif method == 'alphabet-discrimination':
+        return _split_sentences(sentence, labels)
+    else:
+        raise Exception("Unknown preprocessing method")
 
-    sentence = sentence.apply(lambda x: remove_numbers(x)) ## without it no difference 0.8918 vs 0.8920
-
-    # sentence = sentence.apply(lambda x: delete_minority_alphabet(x)) ## clearly degrades the performance of the algo.
-
-    return sentence,labels
-
-
-ad = AlphabetDetector()
+def _split_sentences(sentence: pd.Series, labels: pd.Series) -> tuple[pd.Series, pd.Series]:
+    df = (
+        pd.DataFrame({
+           "sentence": sentence,
+            "language": labels
+        })
+        .assign(sentence=lambda df_: df_
+            .sentence
+            .astype(str)
+            .str
+            .split(r'[^\w\s]')
+        )
+        .explode(column="sentence")
+    )
+    return df.sentence, df.language
 
 def delete_minority_alphabet(sentence):
     # Selecting five random letters
