@@ -3,6 +3,16 @@ from sklearn.ensemble import RandomForestClassifier
 from sklearn.preprocessing import LabelEncoder
 from xgboost import XGBClassifier
 from utils import toNumpyArray
+from typing import Literal
+
+def classify_data(X_train, y_train, X_test, method: Literal['naive-bayes', 'random-forest'] | None):
+    if method == 'naive-bayes':
+        return applyNaiveBayes(X_train, y_train, X_test)
+    elif method == 'random-forest':
+        return applyRandomForest(X_train, y_train, X_test)
+    else:
+        raise Exception("Unknown classifier")
+    
 
 # You may add more classifier methods replicating this function
 def applyNaiveBayes(X_train, y_train, X_test):

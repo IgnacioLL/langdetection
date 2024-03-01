@@ -3,7 +3,7 @@ import pandas as pd
 from sklearn.model_selection import train_test_split
 import random
 from utils import *
-from classifiers import *
+from classifiers import classify_data
 from preprocess import  preprocess
 
 seed = 42
@@ -19,6 +19,15 @@ def get_parser():
     parser.add_argument("-a", "--analyzer",
                          help="Tokenization level: {word, char}", 
                         type=str, choices=['word','char'])
+    parser.add_argument("-p", "--preprocess",
+                        help="Preprocessing method",
+                        choices=['sentence-splitting', 'alphabet-discrimination'],
+                        )
+    parser.add_argument("-c", "--classifier",
+                        help="Classifier method",
+                        choices=['naive-bayes', 'random-forest'],
+                        default='random-forest'
+                        )
     return parser
 
 
@@ -46,8 +55,8 @@ if __name__ == "__main__":
     
     # Preprocess text (Word granularity only)
     if args.analyzer == 'word':
-        X_train, y_train = preprocess(X_train,y_train)
-        X_test, y_test = preprocess(X_test,y_test)
+        X_train, y_train = preprocess(X_train,y_train, args.preprocess)
+        X_test, y_test = preprocess(X_test,y_test, args.preprocess)
 
     #Compute text features
     features, X_train_raw, X_test_raw = compute_features(X_train, 
@@ -63,7 +72,7 @@ if __name__ == "__main__":
 
     #Apply Classifier  
     X_train, X_test = normalizeData(X_train_raw, X_test_raw)
-    y_predict = applyXgboost(X_train, y_train, X_test)
+    y_predict = classify_data(X_train, y_train, X_test, args.classifier)
     
     print('========')
     print('Prediction Results:')    

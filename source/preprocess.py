@@ -6,7 +6,7 @@ from alphabet_detector import AlphabetDetector
 
 ad = AlphabetDetector()
 
-def preprocess(sentence, labels, method: Literal['sentence-splitting', 'alphabet-discrimination']):
+def preprocess(sentence, labels, method: Literal['sentence-splitting', 'alphabet-discrimination'] | None):
     '''
     Task: Given a sentence apply all the required preprocessing steps
     to compute train our classifier, such as sentence splitting, 
@@ -22,7 +22,7 @@ def preprocess(sentence, labels, method: Literal['sentence-splitting', 'alphabet
     elif method == 'alphabet-discrimination':
         return _split_sentences(sentence, labels)
     else:
-        raise Exception("Unknown preprocessing method")
+        return sentence, labels
 
 def _split_sentences(sentence: pd.Series, labels: pd.Series) -> tuple[pd.Series, pd.Series]:
     df = (
