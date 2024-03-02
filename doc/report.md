@@ -32,8 +32,40 @@ The PCA plot is pretty significant as it shows, languages with similar alphabets
 
 ### Sentence splitting and tokenization
 
-Splitting sentences by `[^\w\s]` regular expression isn't a good preprocessing method as sentences are split by words in most cases. Thus, the matrix shows low performance on languages with a common origin e.g. Hindi, Tamil and other Asiatic languages. Note that some of this results are due to references to words in other languages, e.g. street addresses or citations.
+This preprocessing method splits each word of the sentences into a different record. Of course, repeating the same language label for each. Cross language references in sentences will now be split in one record each **assigning a wrong language**. In result, the training set will now contain a considerable number of misstagged records.
+
+The results of this function are two series of preprocessed data that can be used as features and labels for the classifier. The function splits the sentences into words, which can capture the lexical and morphological features of different languages. The function also removes the punctuation marks, which can reduce the noise and sparsity of the data.
+
+## Code
+
+### Preprocess - Sentence splitting
+
+The main functions used are `.split(r'[^\w\s]')` which returns a list of words for each sentence, and `.explode(...)` which transforms each element of a list-like to a row, replicating index values.
+
+```python
+def _split_sentences(sentence: pd.Series, labels: pd.Series) -> tuple[pd.Series, pd.Series]:
+    df = (
+        pd.DataFrame({
+           "sentence": sentence,
+            "language": labels
+        })
+        .assign(sentence=lambda df_: df_
+            .sentence
+            .astype(str)
+            .str
+            .split(r'[^\w\s]')
+        )
+        .explode(column="sentence")
+    )
+    return df.sentence, df.language
+```
+
+## Experiments and results
+
+### Preprocess - Sentence splitting
+
+Splitting sentences by `[^\w\s]` regular expression isn't a good preprocessing method as there's no universal regular expression for this purpose. Thus, the matrix shows low performance on the following languages. Hindi and Urdu, which use complex ligatures or conjuncts to combine two or more characters into a single glyph. Thai and Vietnamese, use diacritical marks or tone marks to modify the pronunciation or meaning of the characters. Chinese and Japanese, do not use spaces or punctuation marks to separate words or sentences. Arabic, have different writing systems and scripts, such as the Arabic script and the Arabic numerals.
 
 ![Confusion Matrix](images/preprocess_split_sentence_confusion.png)
 
-
+## Conclusions
