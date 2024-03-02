@@ -26,7 +26,7 @@ def get_parser():
     parser.add_argument("-c", "--classifier",
                         help="Classifier method",
                         choices=['naive-bayes', 'random-forest'],
-                        default='random-forest'
+                        default='naive-bayes'
                         )
     return parser
 
