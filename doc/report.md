@@ -36,6 +36,15 @@ This preprocessing method splits each word of the sentences into a different rec
 
 The results of this function are two series of preprocessed data that can be used as features and labels for the classifier. The function splits the sentences into words, which can capture the lexical and morphological features of different languages. The function also removes the punctuation marks, which can reduce the noise and sparsity of the data.
 
+### Alphabet discrimination
+
+This preprocessing method detects the most used alphabet being used taking 10 random characters from the sentence and deleting all characters which do not coincide with the same alphabet except the blank space. 
+
+### Number removal
+
+We also remove all numbers as they are not language specific and are not very useful and may create noise in the model. 
+
+
 ## Code
 
 ### Preprocess - Sentence splitting
@@ -60,6 +69,68 @@ def _split_sentences(sentence: pd.Series, labels: pd.Series) -> tuple[pd.Series,
     return df.sentence, df.language
 ```
 
+### Preprocess - Alphabet discrimination
+
+```python
+def _delete_minority_alphabet(sentence):
+    # Selecting five random letters
+    max_len = np.minimum(len(sentence), 10)
+    random_letters = random.sample(sentence,  max_len)
+
+    # Counting the occurrences of each alphabet type
+    alphabet_counts = {
+        'greek':  0,
+        'cyrillic':  0,
+        'latin':  0,
+        'arabic':  0,
+        'hebrew':  0,
+        'cjk':  0,
+        'hangul':  0,
+        'hiragana':  0,
+        'katakana':  0,
+        'thai':  0
+    }
+
+    for letter in random_letters:
+        if ad.is_greek(letter):
+            alphabet_counts['greek'] +=  1
+        if ad.is_cyrillic(letter):
+            alphabet_counts['cyrillic'] +=  1
+        if ad.is_latin(letter):
+            alphabet_counts['latin'] +=  1
+        if ad.is_arabic(letter):
+            alphabet_counts['arabic'] +=  1
+        if ad.is_hebrew(letter):
+            alphabet_counts['hebrew'] +=  1
+        if ad.is_cjk(letter):
+            alphabet_counts['cjk'] +=  1
+        if ad.is_hangul(letter):
+            alphabet_counts['hangul'] +=  1
+        if ad.is_hiragana(letter):
+            alphabet_counts['hiragana'] +=  1
+        if ad.is_katakana(letter):
+            alphabet_counts['katakana'] +=  1
+        if ad.is_thai(letter):
+            alphabet_counts['thai'] +=  1
+
+    # Determining the majority alphabet type
+    max_count = max(alphabet_counts.values())
+    majority_alphabet = [key for key, value in alphabet_counts.items() if value == max_count]
+
+    # Filtering letters based on the majority alphabet type
+    filtered_letters = [letter for letter in sentence if getattr(ad, f'is_{majority_alphabet[0]}')(letter) | (letter == " ")]
+
+    return "".join(filtered_letters)
+```
+
+### Preprocess - Number removal
+
+```python
+def _remove_numbers(text):
+  no_digits = "".join(char for char in text if not char.isdigit())
+  return no_digits
+```
+
 ## Experiments and results
 
 ### Preprocess - Sentence splitting
@@ -67,5 +138,17 @@ def _split_sentences(sentence: pd.Series, labels: pd.Series) -> tuple[pd.Series,
 Splitting sentences by `[^\w\s]` regular expression isn't a good preprocessing method as there's no universal regular expression for this purpose. Thus, the matrix shows low performance on the following languages. Hindi and Urdu, which use complex ligatures or conjuncts to combine two or more characters into a single glyph. Thai and Vietnamese, use diacritical marks or tone marks to modify the pronunciation or meaning of the characters. Chinese and Japanese, do not use spaces or punctuation marks to separate words or sentences. Arabic, have different writing systems and scripts, such as the Arabic script and the Arabic numerals.
 
 ![Confusion Matrix](images/preprocess_split_sentence_confusion.png)
+
+### Preprocess - Alphabet discrimination
+
+Detecting the language and deleting all the non-equal alphabet characters degrades performance considerably. Specially in the hindi, tamil, japanese and chinese. As we don't understand the language and the posible variations is hard to determine why is it failing. We won't use it. 
+
+![Confusion Matrix](images/preprocess_alphabet_discrimination_confusion.png)
+
+### Preprocess - Number removal
+
+Removing all numbers does not have an impact in the models ability to classify it. 
+![Confusion Matrix](images/preprocess_number_removal_confusion.png)
+
 
 ## Conclusions
