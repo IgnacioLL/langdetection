@@ -20,7 +20,7 @@ As shown in the confusion matrix, languages from a common origin (asiatic, latin
 
 **How languages overlap on the PCA plot? What could that overlapping mean?**
 
-The PCA plot is pretty significant as it shows, languages with similar alphabets overlapped. For example:
+Although the PCA first two dimensiones do not capture a have percentage variance as first dimension captures 7.8\% and the second one captures 3.6\%, the PCA plot is pretty shows clear trends. Languages with similar alphabets overlapped. For example:
 - In the upper right corner Thai, Hindi and Tamil.
 - Below, Korean and Japanese.
 - In the left hand side, european languages (Spanish, English, French, Portuguese...).
