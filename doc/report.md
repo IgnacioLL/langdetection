@@ -44,6 +44,16 @@ This preprocessing method detects the most used alphabet being used taking 10 ra
 
 We also remove all numbers as they are not language specific and are not very useful and may create noise in the model. 
 
+## Classifiers
+
+### Ranfom Forest
+
+Random forest is a machine learning technique that builds a "forest" out of many individual "decision trees." Each tree learns by making a series of yes-or-no decisions based on different features of the data (like word frequency or character patterns). In language detection, these features could analyze things like character sets, grammatical structures, or common word usage as is our case. Finally, the random forest combines the predictions of all the trees, making it more robust and adaptable to the complexities of identifying different languages.
+
+
+### Xgboost classifier
+
+XGBoost, similar to random forest, is an ensemble technique. It builds a series of sequential models in our case decision trees that focus on improving upon the weaknesses of previous models in the sequence. For language detection, XGBoost can analyze features like character n-grams or word frequencies, iteratively refining its predictions to identify the most likely language. This focus on correcting errors makes XGBoost potentially well-suited for the nuanced task of language classification.
 
 ## Code
 
@@ -131,24 +141,87 @@ def _remove_numbers(text):
   return no_digits
 ```
 
+### Classifier - Random forest
+
+```python
+def applyRandomForest(X_train, y_train, X_test):
+    '''
+    Task: Given some features train a Random Forest Classifier
+          and return its predictions over a test set
+    Input; X_train -> Train features
+           y_train -> Train_labels
+           X_test -> Test features 
+    Output: y_predict -> Predictions over the test set
+    '''
+    trainArray = toNumpyArray(X_train)
+    testArray = toNumpyArray(X_test)
+    
+    clf = RandomForestClassifier()
+    clf.fit(trainArray, y_train)
+    y_predict = clf.predict(testArray)
+    return y_predict
+```
+
+### Classifier - Xgboost
+
+```python
+def applyXgboost(X_train, y_train, X_test): 
+    '''
+    Task: Given some features train a Random Forest Classifier
+          and return its predictions over a test set
+    Input; X_train -> Train features
+           y_train -> Train_labels
+           X_test -> Test features 
+    Output: y_predict -> Predictions over the test set
+    '''
+    trainArray = toNumpyArray(X_train)
+    testArray = toNumpyArray(X_test)
+    
+    label_mapping, reverse_mapping = _create_mappings(y_train)
+
+    # Use the dictionary to convert string labels to numeric values
+    y_numeric = [label_mapping[label] for label in y_train]
+    
+    clf = XGBClassifier()
+    clf.fit(trainArray, y_numeric)
+    y_predict = clf.predict(testArray)
+
+    # Use the dictionary to convert numeric labels to string values
+    y_predict_string = [reverse_mapping[idx] for idx in y_predict]
+    return y_predict_string
+```
+
 ## Experiments and results
 
 ### Preprocess - Sentence splitting
 
 Splitting sentences by `[^\w\s]` regular expression isn't a good preprocessing method as there's no universal regular expression for this purpose. Thus, the matrix shows low performance on the following languages. Hindi and Urdu, which use complex ligatures or conjuncts to combine two or more characters into a single glyph. Thai and Vietnamese, use diacritical marks or tone marks to modify the pronunciation or meaning of the characters. Chinese and Japanese, do not use spaces or punctuation marks to separate words or sentences. Arabic, have different writing systems and scripts, such as the Arabic script and the Arabic numerals.
 
-![Confusion Matrix](images/preprocess_split_sentence_confusion.png)
+![Confusion Matrix split sentences](images/preprocess_split_sentence_confusion.png)
 
 ### Preprocess - Alphabet discrimination
 
 Detecting the language and deleting all the non-equal alphabet characters degrades performance considerably. Specially in the hindi, tamil, japanese and chinese. As we don't understand the language and the posible variations is hard to determine why is it failing. We won't use it. 
 
-![Confusion Matrix](images/preprocess_alphabet_discrimination_confusion.png)
+![Confusion Matrix alphabet discriminator](images/preprocess_alphabet_discrimination_confusion.png)
 
 ### Preprocess - Number removal
 
 Removing all numbers does not have an impact in the models ability to classify it. 
-![Confusion Matrix](images/preprocess_number_removal_confusion.png)
+
+![Confusion Matrix number removal](images/preprocess_number_removal_confusion.png)
+
+### Classifier - Random Forest
+
+Applying a Random Forest instead of an Naive Bayes model improves considerably the performance as expected. We can see great improvements when predicting a japanese without mixing it with swedish. Differentiating between Japanese and chinese remains a challenge. 
+
+![Confusion Matrix](images/classifier_random_forest.png)
+
+### Classifier - Xgboost
+
+Applying a Xgboost instead of an Naive Bayes model improves considerably the performance but not the random forest one although also the application gets considerably worse. We can see very similar results as the random forest approach. They are very similar algorithms so it was expected. 
+
+![Confusion Matrix](images/classifier_xgboost.png)
 
 
 ## Conclusions
