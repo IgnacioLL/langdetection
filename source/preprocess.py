@@ -15,11 +15,11 @@ def preprocess(sentence, labels, method: Literal['sentence-splitting', 'alphabet
     Input: Sentence in string format
     Output: Preprocessed sentence either as a list or a string
     '''
-    if method == 'sentence-splitting':
+    if method == 'alphabet-discrimination':
         sentence = sentence.apply(lambda x: remove_numbers(x)) ## without it no difference 0.8918 vs 0.8920
         sentence = sentence.apply(lambda x: delete_minority_alphabet(x)) ## clearly degrades the performance of the algo.
         return sentence,labels
-    elif method == 'alphabet-discrimination':
+    elif method == 'sentence-splitting':
         return _split_sentences(sentence, labels)
     else:
         return sentence, labels
