@@ -16,8 +16,8 @@ def preprocess(sentence, labels, method: Literal['sentence-splitting', 'alphabet
     Output: Preprocessed sentence either as a list or a string
     '''
     if method == 'alphabet-discrimination':
-        sentence = sentence.apply(lambda x: remove_numbers(x)) ## without it no difference 0.8918 vs 0.8920
-        sentence = sentence.apply(lambda x: delete_minority_alphabet(x)) ## clearly degrades the performance of the algo.
+        sentence = sentence.apply(lambda x:_remove_numbers(x)) ## without it no difference 0.8918 vs 0.8920
+        sentence = sentence.apply(lambda x:_delete_minority_alphabet(x)) ## clearly degrades the performance of the algo.
         return sentence,labels
     elif method == 'sentence-splitting':
         return _split_sentences(sentence, labels)
@@ -40,7 +40,7 @@ def _split_sentences(sentence: pd.Series, labels: pd.Series) -> tuple[pd.Series,
     )
     return df.sentence, df.language
 
-def delete_minority_alphabet(sentence):
+def _delete_minority_alphabet(sentence):
     # Selecting five random letters
     max_len = np.minimum(len(sentence), 10)
     random_letters = random.sample(sentence,  max_len)
@@ -90,7 +90,7 @@ def delete_minority_alphabet(sentence):
 
     return "".join(filtered_letters)
 
-def remove_numbers(text):
+def _remove_numbers(text):
   """
   This function removes numbers from a given text string.
 

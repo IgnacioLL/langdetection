@@ -10,6 +10,8 @@ def classify_data(X_train, y_train, X_test, method: Literal['naive-bayes', 'rand
         return applyNaiveBayes(X_train, y_train, X_test)
     elif method == 'random-forest':
         return applyRandomForest(X_train, y_train, X_test)
+    elif method == 'xgboost':
+        return applyXgboost(X_train, y_train, X_test)
     else:
         raise Exception("Unknown classifier")
     
