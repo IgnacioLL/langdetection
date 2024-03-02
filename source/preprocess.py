@@ -86,19 +86,10 @@ def _delete_minority_alphabet(sentence):
     majority_alphabet = [key for key, value in alphabet_counts.items() if value == max_count]
 
     # Filtering letters based on the majority alphabet type
-    filtered_letters = [letter for letter in sentence if getattr(ad, f'is_{majority_alphabet[0]}')(letter)]
+    filtered_letters = [letter for letter in sentence if getattr(ad, f'is_{majority_alphabet[0]}')(letter) | (letter == " ")]
 
     return "".join(filtered_letters)
 
 def _remove_numbers(text):
-  """
-  This function removes numbers from a given text string.
-
-  Args:
-      text: The text string to process.
-
-  Returns:
-      A new string with all numeric characters removed.
-  """
   no_digits = "".join(char for char in text if not char.isdigit())
   return no_digits
