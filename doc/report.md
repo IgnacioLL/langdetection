@@ -211,7 +211,15 @@ def applyXgboost(X_train, y_train, X_test):
 
 Splitting sentences by `[^\w\s]` regular expression isn't a good preprocessing method as there's no universal regular expression for this purpose. Thus, the matrix shows low performance on the following languages. Hindi and Urdu, which use complex ligatures or conjuncts to combine two or more characters into a single glyph. Thai and Vietnamese, use diacritical marks or tone marks to modify the pronunciation or meaning of the characters. Chinese and Japanese, do not use spaces or punctuation marks to separate words or sentences. Arabic, have different writing systems and scripts, such as the Arabic script and the Arabic numerals.
 
+
+<figure>
+    <img src="images/images/preprocess_split_sentence_confusion.png" width="200" height="100"
+         alt="Confusion Matrix split sentences">
+    <figcaption>Confusion matrix split sentences</figcaption>
+</figure>
+
 ![Confusion Matrix split sentences](images/preprocess_split_sentence_confusion.png)
+
 
 ### Preprocess - Alphabet discrimination
 
@@ -233,7 +241,7 @@ Applying a Random Forest instead of an Naive Bayes model improves considerably t
 
 ### Classifier - Xgboost
 
-Applying a Xgboost instead of an Naive Bayes model improves considerably the performance but not the random forest one although also the application gets considerably worse. We can see very similar results as the random forest approach. They are very similar algorithms so it was expected. 
+Applying a Xgboost instead of an Naive Bayes model improves considerably the performance but not the random forest one but the application gets considerably worse. We can see very similar results as the random forest approach. They are very similar algorithms so it was expected. 
 
 ![Confusion Matrix](images/classifier_xgboost.png)
 
