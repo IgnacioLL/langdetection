@@ -215,35 +215,48 @@ Splitting sentences by `[^\w\s]` regular expression isn't a good preprocessing m
 <figure>
     <img src="images/preprocess_split_sentence_confusion.png" width="500" height="300"
          alt="Confusion Matrix split sentences">
-    <figcaption>Confusion matrix split sentences</figcaption>
 </figure>
 
-![Confusion Matrix split sentences](images/preprocess_split_sentence_confusion.png)
 
 
 ### Preprocess - Alphabet discrimination
 
 Detecting the language and deleting all the non-equal alphabet characters degrades performance considerably. Specially in the hindi, tamil, japanese and chinese. As we don't understand the language and the posible variations is hard to determine why is it failing. We won't use it. 
 
-![Confusion Matrix alphabet discriminator](images/preprocess_alphabet_discrimination_confusion.png)
+
+<figure>
+    <img src="images/preprocess_alphabet_discrimination_confusion.png" width="500" height="300"
+         alt="Confusion Matrix alphabet discriminator">
+</figure>
 
 ### Preprocess - Number removal
 
 Removing all numbers does not have an impact in the models ability to classify it. 
 
-![Confusion Matrix number removal](images/preprocess_number_removal_confusion.png)
+<figure>
+    <img src="images/preprocess_number_removal_confusion.png" width="500" height="300"
+         alt="Confusion Matrix number removal">
+</figure>
 
 ### Classifier - Random Forest
 
 Applying a Random Forest instead of an Naive Bayes model improves considerably the performance as expected. We can see great improvements when predicting a japanese without mixing it with swedish. Differentiating between Japanese and chinese remains a challenge. 
 
-![Confusion Matrix](images/classifier_random_forest.png)
+<figure>
+    <img src="images/classifier_random_forest.png" width="500" height="300"
+         alt="Confusion Matrix random forest">
+</figure>
+
 
 ### Classifier - Xgboost
 
 Applying a Xgboost instead of an Naive Bayes model improves considerably the performance but not the random forest one but the application gets considerably worse. We can see very similar results as the random forest approach. They are very similar algorithms so it was expected. 
 
-![Confusion Matrix](images/classifier_xgboost.png)
+
+<figure>
+    <img src="images/classifier_xgboost.png" width="500" height="300"
+         alt="Confusion Matrix xgboost">
+</figure>
 
 
 ## Conclusions
