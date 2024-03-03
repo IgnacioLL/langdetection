@@ -213,7 +213,7 @@ Splitting sentences by `[^\w\s]` regular expression isn't a good preprocessing m
 
 
 <figure>
-    <img src="images/images/preprocess_split_sentence_confusion.png" width="200" height="100"
+    <img src="images/preprocess_split_sentence_confusion.png" width="200" height="100"
          alt="Confusion Matrix split sentences">
     <figcaption>Confusion matrix split sentences</figcaption>
 </figure>
