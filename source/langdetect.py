@@ -21,7 +21,7 @@ def get_parser():
                         type=str, choices=['word','char'])
     parser.add_argument("-p", "--preprocess",
                         help="Preprocessing method",
-                        choices=['sentence-splitting', 'alphabet-discrimination'],
+                        choices=['sentence-splitting', 'alphabet-discrimination','character-splitter'],
                         )
     parser.add_argument("-c", "--classifier",
                         help="Classifier method",

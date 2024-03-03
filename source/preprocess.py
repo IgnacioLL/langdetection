@@ -21,6 +21,9 @@ def preprocess(sentence, labels, method: Literal['sentence-splitting', 'alphabet
         return sentence,labels
     elif method == 'sentence-splitting':
         return _split_sentences(sentence, labels)
+    elif method == 'character-splitter':
+        sentence = sentence.apply(lambda x: _split_sentences_in_characters(x, 1))
+        return sentence, labels
     else:
         return sentence, labels
 
@@ -57,3 +60,20 @@ def _delete_minority_alphabet(sentence):
 def _remove_numbers(text):
   no_digits = "".join(char for char in text if not char.isdigit())
   return no_digits
+
+def _split_sentences_in_characters(text, characters_sep=2):
+    if _count_number_blancks(text): 
+        result = [text[i:i+2] for i in range(0, len(text), characters_sep)]
+        result_splitted = " ".join(result)
+        return result_splitted
+    else: 
+        return text
+
+
+
+def _count_number_blancks(text):
+    counter = text.count(' ')
+
+    condition = counter/len(text) < 0.05
+
+    return condition
