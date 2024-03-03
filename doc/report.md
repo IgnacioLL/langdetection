@@ -213,7 +213,7 @@ Splitting sentences by `[^\w\s]` regular expression isn't a good preprocessing m
 
 
 <figure>
-    <img src="images/preprocess_split_sentence_confusion.png" width="200" height="100"
+    <img src="images/preprocess_split_sentence_confusion.png" width="500" height="300"
          alt="Confusion Matrix split sentences">
     <figcaption>Confusion matrix split sentences</figcaption>
 </figure>
@@ -255,13 +255,3 @@ Some of the main conclusions and insights we have gained from this task are:
 - The preprocessing steps can improve or degrade the performance of the system, depending on the data, the features, and the algorithm. Some preprocessing steps, such as sentence splitting, alphabet discrimination, or number removal, may not be suitable or effective for all languages and alphabets. Some preprocessing steps, such as normalization, filtering, or vectorization, may reduce the noise and sparsity of the data, and capture the lexical and semantic features of different languages.
 - The classifier models can have different strengths and weaknesses, depending on the data, the features, and the algorithm. Some classifier models, such as naive Bayes, may be simple and fast, but may make strong assumptions and ignore the dependencies among the features. Some classifier models, such as random forest or XGBoost, may be robust and adaptable, but may require more computation and memory, and may be prone to overfitting or bias.
 - The performance and errors of the system can be measured and analyzed using different metrics and plots, such as accuracy, precision, recall, f1-score, confusion matrix, and PCA plot. These tools can help us understand how well the system can correctly identify the language of a given text, and which languages are most confused or misclassified by the system.
-
-
-figure {
-    text-align: center;
-}
-
-figure img {
-    display: block;
-    margin: 0 auto;
-}
