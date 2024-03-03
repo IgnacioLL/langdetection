@@ -1,4 +1,13 @@
-# Language Detection
+# Lab Deliverable 1: Language Detection
+
+_Mining Unstructured Data, Master in Data Science, Barcelona School of Informatics_
+
+Javier Herrer Torres (javier.herrer.torres@estudiantat.upc.edu)
+Ignacio Lloret Lorente (ignacio.lloret@estudiantat.upc.edu)
+
+---
+
+[GitHub repository](https://github.com/IgnacioLL/langdetection)
 
 ## Introduction
 
