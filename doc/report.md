@@ -220,7 +220,6 @@ Applying a Xgboost instead of an Naive Bayes model improves considerably the per
          alt="Confusion Matrix xgboost">
 </figure>
 
-![Confusion Matrix](images/.png)
 
 ## Conclusions
 
