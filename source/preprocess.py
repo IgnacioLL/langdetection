@@ -61,7 +61,7 @@ def _remove_numbers(text):
   no_digits = "".join(char for char in text if not char.isdigit())
   return no_digits
 
-def _split_sentences_in_characters(text, characters_sep=2):
+def _split_sentences_in_characters(text: str, characters_sep: int=2):
     if _count_number_blancks(text, threshold=.05): 
         result = [text[i:i+2] for i in range(0, len(text), characters_sep)]
         result_splitted = " ".join(result)
@@ -69,6 +69,6 @@ def _split_sentences_in_characters(text, characters_sep=2):
     else: 
         return text
 
-def _count_number_blancks(text, threshold):
+def _count_number_blancks(text: str, threshold: float) -> bool:
     counter = text.count(' ')
     return (counter/len(text)) < threshold
