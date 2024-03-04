@@ -62,18 +62,13 @@ def _remove_numbers(text):
   return no_digits
 
 def _split_sentences_in_characters(text, characters_sep=2):
-    if _count_number_blancks(text): 
+    if _count_number_blancks(text, threshold=.05): 
         result = [text[i:i+2] for i in range(0, len(text), characters_sep)]
         result_splitted = " ".join(result)
         return result_splitted
     else: 
         return text
 
-
-
-def _count_number_blancks(text):
+def _count_number_blancks(text, threshold):
     counter = text.count(' ')
-
-    condition = counter/len(text) < 0.05
-
-    return condition
+    return (counter/len(text)) < threshold
