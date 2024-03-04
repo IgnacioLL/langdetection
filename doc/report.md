@@ -59,6 +59,10 @@ This preprocessing method detects the most used alphabet being used taking 10 ra
 
 We also remove all numbers as they are not language specific and are not very useful and may create noise in the model. 
 
+### Character splitting
+
+As seen in the baseline confusion matrix the worst language to be predicted is Chinese/Japanese. We consider that if it is a ideogram language this should be taken in to account and take each letter as if it was a complete word. Therefore if a sentence has less than 5\% of blanks in the sentence we will divide this sentence character by character. 
+
 ## Classifiers
 
 ### Ranfom Forest
@@ -110,6 +114,22 @@ def _remove_numbers(text):
   return no_digits
 ```
 
+### Preprocess - Character splitting
+
+```python
+def _split_sentences_in_characters(text: str, characters_sep: int=2):
+    if _count_number_blancks(text, threshold=.05): 
+        result = [text[i:i+2] for i in range(0, len(text), characters_sep)]
+        result_splitted = " ".join(result)
+        return result_splitted
+    else: 
+        return text
+
+def _count_number_blancks(text: str, threshold: float) -> bool:
+    counter = text.count(' ')
+    return (counter/len(text)) < threshold
+```
+
 ### Classifier - Random forest
 
 ```python
@@ -159,6 +179,12 @@ Detecting the language and deleting all the non-equal alphabet characters degrad
 Removing all numbers does not have an impact in the models ability to classify it. 
 
 <img src="images/preprocess_number_removal_confusion.png" alt="Confusion Matrix number removal" width="50%"/>
+
+### Preprocess - Character splitting
+
+Splitting the sentences in characters if 5\% of the characters are different than blank space has a great impact on the result. Over 4 points of F1 score an clearly improving the confusion matrix for ideogram-kind languages. 
+
+<img src="images/preprocess_character_splitting.png" alt="Confusion Matrix number removal" width="50%"/>
 
 ### Classifier - Random Forest
 
