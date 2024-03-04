@@ -30,7 +30,7 @@ Only 25% of the tokens in the text are also in the vocabulary, and the remaining
 
 As shown in the confusion matrix, languages from a common origin (asiatic, latin...) often produce more errors as they share similar vocabulary. It's been also observed some of the errors are due to cross language references or citations.
 
-![Confusion Matrix](images/baseline_confusion.png)
+<img src="images/baseline_confusion.png" alt="Confusion Matrix" width="50%"/>
 
 **How languages overlap on the PCA plot? What could that overlapping mean?**
 
@@ -40,7 +40,8 @@ Although the PCA first two dimensiones do not capture a high percentage variance
 - In the left hand side, european languages (Spanish, English, French, Portuguese...).
 - In the lower right corner, arabic languages (Urdu, Arabic and Pushto).
 
-![PCA Plot](images/baseline_pca.png)
+<img src="images/baseline_pca.png" alt="PCA Plot" width="50%"/>
+
 
 ## Preprocess
 
@@ -76,20 +77,13 @@ XGBoost, similar to random forest, is an ensemble technique. It builds a series 
 The main functions used are `.split(r'[^\w\s]')` which returns a list of words for each sentence, and `.explode(...)` which transforms each element of a list-like to a row, replicating index values.
 
 ```python
-def _split_sentences(sentence: pd.Series, labels: pd.Series) -> tuple[pd.Series, pd.Series]:
-    df = (
-        pd.DataFrame({
-           "sentence": sentence,
-            "language": labels
-        })
-        .assign(sentence=lambda df_: df_
-            .sentence
-            .astype(str)
-            .str
-            .split(r'[^\w\s]')
-        )
-        .explode(column="sentence")
-    )
+def _split_sentences(
+    sentence: pd.Series,
+    labels: pd.Series
+) -> tuple[pd.Series, pd.Series]:
+    df = (pd.DataFrame({"sentence": sentence, "language": labels})
+          .assign(sentence=lambda df_: df_.sentence.astype(str).str.split(r'[^\w\s]'))
+          .explode(column="sentence"))
     return df.sentence, df.language
 ```
 
@@ -97,15 +91,14 @@ def _split_sentences(sentence: pd.Series, labels: pd.Series) -> tuple[pd.Series,
 
 ```python
 def _delete_minority_alphabet(sentence):
-    alphabets = ['greek', 'cyrillic', 'latin', 'arabic', 'hebrew', 'cjk', 'hangul', 'hiragana', 'katakana', 'thai']
+    alphabets = ['greek', 'cyrillic', 'latin', 'arabic', 'hebrew', 'cjk',
+                 'hangul', 'hiragana', 'katakana', 'thai']
     random_letters = random.sample(sentence, min(len(sentence), 10))
-    
-    alphabet_counts = {alphabet: sum(getattr(ad, f'is_{alphabet}')(letter) for letter in random_letters) for alphabet in alphabets}
-    
+    alphabet_counts = {alphabet: sum(getattr(ad, f'is_{alphabet}')(letter) 
+                       for letter in random_letters) for alphabet in alphabets}
     majority_alphabet = max(alphabet_counts, key=alphabet_counts.get)
-    
-    filtered_letters = [letter for letter in sentence if getattr(ad, f'is_{majority_alphabet}')(letter) or letter == " "]
-    
+    filtered_letters = [letter for letter in sentence 
+                        if getattr(ad, f'is_{majority_alphabet}')(letter) or letter == " "]
     return "".join(filtered_letters)
 ```
 
@@ -121,14 +114,6 @@ def _remove_numbers(text):
 
 ```python
 def applyRandomForest(X_train, y_train, X_test):
-    '''
-    Task: Given some features train a Random Forest Classifier
-          and return its predictions over a test set
-    Input; X_train -> Train features
-           y_train -> Train_labels
-           X_test -> Test features 
-    Output: y_predict -> Predictions over the test set
-    '''
     trainArray = toNumpyArray(X_train)
     testArray = toNumpyArray(X_test)
     
@@ -142,26 +127,14 @@ def applyRandomForest(X_train, y_train, X_test):
 
 ```python
 def applyXgboost(X_train, y_train, X_test): 
-    '''
-    Task: Given some features train a Random Forest Classifier
-          and return its predictions over a test set
-    Input; X_train -> Train features
-           y_train -> Train_labels
-           X_test -> Test features 
-    Output: y_predict -> Predictions over the test set
-    '''
     trainArray = toNumpyArray(X_train)
     testArray = toNumpyArray(X_test)
-    
     label_mapping, reverse_mapping = _create_mappings(y_train)
-
     # Use the dictionary to convert string labels to numeric values
     y_numeric = [label_mapping[label] for label in y_train]
-    
     clf = XGBClassifier()
     clf.fit(trainArray, y_numeric)
     y_predict = clf.predict(testArray)
-
     # Use the dictionary to convert numeric labels to string values
     y_predict_string = [reverse_mapping[idx] for idx in y_predict]
     return y_predict_string
@@ -173,52 +146,32 @@ def applyXgboost(X_train, y_train, X_test):
 
 Splitting sentences by `[^\w\s]` regular expression isn't a good preprocessing method as there's no universal regular expression for this purpose. Thus, the matrix shows low performance on the following languages. Hindi and Urdu, which use complex ligatures or conjuncts to combine two or more characters into a single glyph. Thai and Vietnamese, use diacritical marks or tone marks to modify the pronunciation or meaning of the characters. Chinese and Japanese, do not use spaces or punctuation marks to separate words or sentences. Arabic, have different writing systems and scripts, such as the Arabic script and the Arabic numerals.
 
-
-<figure>
-    <img src="images/preprocess_split_sentence_confusion.png" width="500" height="300"
-         alt="Confusion Matrix split sentences">
-</figure>
-
-
+<img src="images/preprocess_split_sentence_confusion.png" alt="Confusion Matrix split sentences" width="50%"/>
 
 ### Preprocess - Alphabet discrimination
 
 Detecting the language and deleting all the non-equal alphabet characters degrades performance considerably. Specially in the hindi, tamil, japanese and chinese. As we don't understand the language and the posible variations is hard to determine why is it failing. We won't use it. 
 
-
-<figure>
-    <img src="images/preprocess_alphabet_discrimination_confusion.png" width="500" height="300"
-         alt="Confusion Matrix alphabet discriminator">
-</figure>
+<img src="images/preprocess_alphabet_discrimination_confusion.png" alt="Confusion Matrix alphabet discriminator" width="50%"/>
 
 ### Preprocess - Number removal
 
 Removing all numbers does not have an impact in the models ability to classify it. 
 
-<figure>
-    <img src="images/preprocess_number_removal_confusion.png" width="500" height="300"
-         alt="Confusion Matrix number removal">
-</figure>
+<img src="images/preprocess_number_removal_confusion.png" alt="Confusion Matrix number removal" width="50%"/>
 
 ### Classifier - Random Forest
 
 Applying a Random Forest instead of an Naive Bayes model improves considerably the performance as expected. We can see great improvements when predicting a japanese without mixing it with swedish. Differentiating between Japanese and chinese remains a challenge. 
 
-<figure>
-    <img src="images/classifier_random_forest.png" width="500" height="300"
-         alt="Confusion Matrix random forest">
-</figure>
+<img src="images/classifier_random_forest.png" alt="Confusion Matrix" width="50%"/>
 
 
 ### Classifier - Xgboost
 
 Applying a Xgboost instead of an Naive Bayes model improves considerably the performance but not the random forest one but the application gets considerably worse. We can see very similar results as the random forest approach. They are very similar algorithms so it was expected. 
 
-
-<figure>
-    <img src="images/classifier_xgboost.png" width="500" height="300"
-         alt="Confusion Matrix xgboost">
-</figure>
+<img src="images/classifier_xgboost.png" alt="Confusion Matrix" width="50%"/>
 
 
 ## Conclusions
